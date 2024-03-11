@@ -27,13 +27,11 @@ parser = argparse.ArgumentParser(prog="anonymize.py")
 parser.add_argument(
     "--i",
     type=str,
-    default="/Users/moritzrempe/Desktop/test_raw_anonymization",
     help="The path to the TWIX file or directory containing TWIX files to be anonymized.",
 )
 parser.add_argument(
     "--o",
     type=str,
-    default="/Users/moritzrempe/Desktop/test_raw_anonymization_output",
     help="The path to save the anonymized files.",
 )
 parser.add_argument(
@@ -44,7 +42,6 @@ parser.add_argument(
 parser.add_argument(
     "--meta_only",
     action="store_true",
-    default=False,
     help="If set, only save the metadata, but do not write anonymized file. Defaults to False",
 )
 
