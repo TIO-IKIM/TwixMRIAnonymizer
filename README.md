@@ -1,0 +1,56 @@
+# TwixAnonymizer
+
+[![Python 3.11.2](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/release/python-3120/) 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+
+<div align="center">
+
+[Getting started](#getting-started) • [Usage](#usage) • [Roadmap](#roadmap) • [Credits](#credits)
+
+</div>
+
+**Twix Anonymizer** is a lightweight Python anonymization-tool for Siemens MRI raw data format twix. 
+
+While the main focus lies on the anonymization of MRI twix files, this tool also allows researchers to extract important metadata, such as sequence name, TR/TI and acceleration factor, for a large amount of data and saved in a csv overview.
+
+## Getting started
+1. Clone repository:
+   
+       git clone https://github.com/TIO-IKIM/TwixMRIAnonymizer.git
+
+2. Create a conda environment with Python version 3.11.2 and install the necessary dependencies:
+   
+       conda env -n k-strip python=3.11.2 -f requirements.txt
+    In case of installation issues with conda, use pip install -r requirements.txt to install the dependecies.
+
+3. Activate your new environment:
+
+       conda activate k-strip
+
+4. Run the script with the corresponding cli parameter, e.g.:
+
+       python3 anonymization.py --i your/input/path --o your/output/path
+
+## Usage
+**Anonymization CLI**
+```
+usage: anonymize.py [-h] [--i I] [--o O] [--f] [--meta_only]
+
+options:
+  -h, --help   show this help message and exit
+  --i I        The path to the TWIX file or directory containing TWIX files to be anonymized.
+  --o O        The path to save the anonymized files.
+  --f          If set, force overwrite existing files. Defaults to False
+  --meta_only  If set, only save the metadata, but do not write anonymized file. Defaults to False
+```
+
+## Roadmap
+
+#### Pip Package
+
+Script will be wrapped into a package and published on pip.
+
+## Credits
+
+Parts of the code of TwixAnonymizer is based on the great package [*Suspect*](https://suspect.readthedocs.io/en/#) by Ben Rowland, et al. for MRS processing.
