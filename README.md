@@ -1,4 +1,4 @@
-# TwixAnonymizer
+# TwixMRIAnonymizer
 
 [![Python 3.11.2](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/release/python-3120/) 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -10,7 +10,7 @@
 
 </div>
 
-**Twix Anonymizer** is a lightweight Python anonymization-tool for Siemens MRI raw data format twix. 
+**Twix MRI Anonymizer** is a lightweight Python anonymization-tool for Siemens MRI raw data format twix. 
 
 While the main focus lies on the anonymization of MRI twix files, this tool also allows researchers to extract important metadata, such as sequence name, TR/TI and acceleration factor, for a large amount of data and saved in a csv overview.
 
