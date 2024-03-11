@@ -13,7 +13,9 @@
 **Twix MRI Anonymizer** is a lightweight Python anonymization-tool for Siemens MRI raw data format twix. 
 
 Twix data contains multiple headers. while the dicom header, often saved as ['hdr'] is easily anonymizable, the much larger header ['hdr_string'] is often overlooked, but contains all the same information as the general header, as well as a detailed overview of the scan settings.
-If anonymization is performed onl yon the first header, all the information contained in the latter will be pasted back into ['hdr'] when saving the "anonymized" file. This brings up the necessity and chances of the following code, which scans the ['hdr_string'] for all informations which need to be anonymized and additionaly can save useful metadata for further tasks.
+
+If anonymization is performed only on the first header, all the information contained in the latter will be pasted back into ['hdr'] when saving the "anonymized" file. 
+This brings up the necessity and chances of the following code, which scans the ['hdr_string'] for all informations which need to be anonymized and additionaly can save useful metadata for further tasks.
 
 While the main focus lies on the anonymization of MRI twix files, this tool also allows researchers to extract important metadata, such as sequence name, TR/TI and acceleration factor, for a large amount of data and saved in a csv overview.
 
