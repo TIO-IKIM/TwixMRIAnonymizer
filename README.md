@@ -26,12 +26,12 @@ While the main focus lies on the anonymization of MRI twix files, this tool also
 
 2. Create a conda environment with Python version 3.11.2 and install the necessary dependencies:
    
-       conda env -n k-strip python=3.11.2 -f requirements.txt
+       conda env -n anonymizer python=3.11.2 -f requirements.txt
     In case of installation issues with conda, use pip install -r requirements.txt to install the dependecies.
 
 3. Activate your new environment:
 
-       conda activate k-strip
+       conda activate anonymizer
 
 4. Run the script with the corresponding cli parameter, e.g.:
 
