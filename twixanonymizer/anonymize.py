@@ -199,6 +199,7 @@ class TwixAnonymizer:
             "TR": r"(<ParamDouble.\"TR\">\s*\{\s*<Precision> \d+\s*)(\d+\.\d*)(\s*\}\n)",
             "TI": r"(<ParamDouble.\"TI\">\s*\{\s*<Precision> \d+\s*)(\d+\.\d*)(\s*\}\n)",
             "flMagneticFieldStrength": r"(<ParamDouble.\"flMagneticFieldStrength\">\s*\{\s*<Precision> \d+\s*)(\d+\.\d*)(\s*\}\n)",
+            "PatientPosition": r"(<ParamString.\"PatientPosition\">\s*\{\s*\")(.+)(\"\s*\}\n)",
         }
 
         matches = {}

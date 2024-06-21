@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+twix_anonymizer.egg-info/PKG-INFO
+twix_anonymizer.egg-info/SOURCES.txt
+twix_anonymizer.egg-info/dependency_links.txt
+twix_anonymizer.egg-info/top_level.txt
+twixanonymizer/__init__.py
+twixanonymizer/anonymize.py
