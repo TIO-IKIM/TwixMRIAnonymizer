@@ -191,6 +191,7 @@ class TwixAnonymizer:
             "tBodyPartExamined": r"(<ParamString.\"tBodyPartExamined\">\s*\{\s*\")(.+)(\"\s*\}\n)",
             "Sequence": r"(<ParamString.\"SequenceDescription\">\s*\{\s*\")(.+)(\"\s*\}\n)",
             "TurboFactor": r"(<ParamLong.\"TurboFactor\">\s*\{\s*)(\d+)(\s*\}\n)",
+            "ReadoutOversamplingFactor": r"(<ParamDouble.\"ReadoutOversamplingFactor\">\s*\{\s*<Precision> \d+\s*)(\d+\.\d*)(\s*\}\n)",
             "NSlc": r"(<ParamLong.\"NSlc\">\s*\{\s*)(\d+)(\s*\}\n)",
             "PhaseEncodingLines": r"(<ParamLong.\"PhaseEncodingLines\">\s*\{\s*)(\d+)(\s*\}\n)",
             "ReadFoV": r"(<ParamDouble.\"ReadFoV\">\s*\{\s*<Precision> \d+\s*)(\d+\.\d*)(\s*\}\n)",
