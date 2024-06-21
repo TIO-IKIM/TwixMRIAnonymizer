@@ -37,6 +37,10 @@ While the main focus lies on the anonymization of MRI twix files, this tool also
 
        python3 anonymization.py --i your/input/path --o your/output/path
 
+Alternative pip installation from inside the repository folder:
+
+       pip install -e .
+
 ## Usage
 **Anonymization CLI**
 ```
