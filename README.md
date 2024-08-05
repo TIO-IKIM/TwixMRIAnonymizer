@@ -26,7 +26,7 @@ While the main focus lies on the anonymization of MRI twix files, this tool also
 
 2. Create a conda environment with Python version 3.11.2 and install the necessary dependencies:
    
-       conda env -n anonymizer python=3.11.2 -f requirements.txt
+       conda env create -n anonymizer -f requirements.txt
     In case of installation issues with conda, use pip install -r requirements.txt to install the dependecies.
 
 3. Activate your new environment:
@@ -35,7 +35,7 @@ While the main focus lies on the anonymization of MRI twix files, this tool also
 
 4. Run the script with the corresponding cli parameter, e.g.:
 
-       python3 anonymization.py --i your/input/path --o your/output/path
+       python3 anonymize.py --i your/input/path --o your/output/path
 
 Alternative pip installation from inside the repository folder:
 
