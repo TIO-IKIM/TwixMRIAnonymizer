@@ -25,21 +25,25 @@ logging.basicConfig(
 parser = argparse.ArgumentParser(prog="anonymize.py")
 
 parser.add_argument(
-    "--i",
+    "-i",
+    "--input",
     type=str,
     help="The path to the TWIX file or directory containing TWIX files to be anonymized.",
 )
 parser.add_argument(
-    "--o",
+    "-o",
+    "--output",
     type=str,
     help="The path to save the anonymized files.",
 )
 parser.add_argument(
-    "--f",
+    "-f",
+    "--force",
     action="store_true",
     help="If set, force overwrite existing files. Defaults to False",
 )
 parser.add_argument(
+    "-m",
     "--meta_only",
     action="store_true",
     help="If set, only save the metadata, but do not write anonymized file. Defaults to False",
@@ -409,13 +413,13 @@ def anonymize_twix(input_path: str, save_path: str, meta_only: bool = False):
 
 def main(args):
 
-    input_path = args.i
-    save_path = args.o
+    input_path = args.input
+    save_path = args.output
     meta_only = args.meta_only
 
     assert Path(input_path).exists(), f"{input_path} does not exist."
 
-    if args.f:
+    if args.force:
         if Path(save_path).exists():
             logging.info(f"Overwriting existing files in {save_path}.")
             shutil.rmtree(save_path)
