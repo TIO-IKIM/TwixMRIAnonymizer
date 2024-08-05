@@ -400,7 +400,10 @@ def anonymize_twix(input_path: str, save_path: str, meta_only: bool = False):
 
     else:
         logging.info(f"Anonymizing {input_path}.")
-        anonymizer = TwixAnonymizer(input_path, save_path)
+        csv_path = Path(save_path, f"{Path(input_path).stem}.csv")
+        if meta_only:
+            logging.info(f"Only saving metadata! Not writing anonymized files.")
+        anonymizer = TwixAnonymizer(input_path, save_path, csv_path, meta_only)
         anonymizer.read_and_anonymize()
 
 
