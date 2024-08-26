@@ -17,6 +17,7 @@ import pandas as pd
 import argparse
 import shutil
 import os
+from datetime import datetime
 
 logging.basicConfig(
     encoding="utf-8", level=logging.DEBUG, format="%(levelname)s - %(message)s"
@@ -82,6 +83,7 @@ class TwixAnonymizer:
             anonymize_twix_vb: Anonymizes a TWIX VB file.
         """
         self.filename = filename
+        self.original_filename = filename
         self.save_path = save_path
         self.csv_path = csv_path
         self.meta_only = meta_only
@@ -137,7 +139,11 @@ class TwixAnonymizer:
         """
 
         anonymized_id = Path(self.filename).stem
-        self.matches = {"anonymized_id": anonymized_id, **self.matches}
+        self.matches = {
+            "anonymized_id": anonymized_id,
+            "orig_filename": self.original_filename,
+            **self.matches,
+        }
         if self.csv_path:
             self.filename = self.csv_path
             if Path(self.filename).is_file():
@@ -151,6 +157,25 @@ class TwixAnonymizer:
         else:
             df = pd.DataFrame(self.matches, index=[0])
             df.to_csv(self.filename, mode="w")
+
+    @staticmethod
+    def _get_date(date_str: str) -> str:
+        """
+        Converts a date string in the format "%d%m%y" to the format "%y%m%d".
+
+        Args:
+            date_str (str): The date string to be converted.
+
+        Returns:
+            str: The converted date string in the format "%Y-%m-%d".
+        """
+        # Parse the string into a datetime object
+        date_obj = datetime.strptime(date_str, "%y%m%d")
+
+        # Format the datetime object into the desired format
+        formatted_date = date_obj.strftime("%Y-%m-%d")
+
+        return formatted_date
 
     @staticmethod
     def anonymize_twix_header(header_string: str) -> str | dict:
@@ -174,7 +199,7 @@ class TwixAnonymizer:
             "StudyLOID": r"(<ParamString.\"StudyLOID\">\s*\{\s*\")(.+)(\"\s*\}\n)",
             "SeriesLOID": r"(<ParamString.\"SeriesLOID\">\s*\{\s*\")(.+)(\"\s*\}\n)",
             "Study": r"(<ParamString.\"Study\">\s*\{\s*\")(.+)(\"\s*\}\n)",
-            "FOR": r"(<ParamString.\"FOR\">\s*\{\s*\")(.+)(\"\s*\}\n)",
+            "FrameOfReference": r"(<ParamString.\"FrameOfReference\">\s*\{\s*\")(.+)(\"\s*\}\n)",
             "Patient": r"(<ParamString.\"Patient\">\s*\{\s*\")(.+)(\"\s*\}\n)",
             "MeasUID": r"(<ParamString.\"MeasUID\">\s*\{\s*\")(.+)(\"\s*\}\n)",
         }
@@ -208,6 +233,13 @@ class TwixAnonymizer:
         }
 
         matches = {}
+
+        frame_of_reference = re.search(
+            r"(<ParamString.\"FrameOfReference\">  { )(\".+\")(  }\n)", header_string
+        ).group(2)
+        exam_date_time = frame_of_reference.split(".")[10]
+        exam_date = exam_date_time[2:8]
+        matches["Exam_date"] = TwixAnonymizer._get_date(exam_date)
 
         for key, buffer in number_buffer.items():
             match = re.search(buffer, header_string)
@@ -257,12 +289,6 @@ class TwixAnonymizer:
             match = re.search(buffer, header_string)
             if match:
                 matches[key] = match.group(2)
-
-        frame_of_reference = re.search(
-            r"(<ParamString.\"FrameOfReference\">  { )(\".+\")(  }\n)", header_string
-        ).group(2)
-        exam_date_time = frame_of_reference.split(".")[10]
-        exam_date = exam_date_time[2:8]
 
         header_string = re.sub(
             r"\"[\d\.]*{0}[\d\.]*\"".format(exam_date),
