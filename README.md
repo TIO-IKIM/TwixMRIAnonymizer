@@ -3,6 +3,7 @@
 [![Python 3.11.2](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/release/python-3120/) 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![DOI](https://img.shields.io/badge/DOI-j.cmpb.2023.107912-blue)]([https://www.sciencedirect.com/science/article/pii/S0169260723005783](https://doi.org/10.48550/arXiv.2410.12402))
 
 <div align="center">
 
@@ -59,6 +60,21 @@ options:
 #### Pip Package
 
 Script will be wrapped into a package and published on pip.
+
+## Citation
+
+If you use our code in your work, please cite us with
+```latex
+@misc{rempe2024deidentificationmedicalimagingdata,
+      title={De-Identification of Medical Imaging Data: A Comprehensive Tool for Ensuring Patient Privacy}, 
+      author={Moritz Rempe and Lukas Heine and Constantin Seibold and Fabian Hörst and Jens Kleesiek},
+      year={2024},
+      eprint={2410.12402},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV},
+      url={https://arxiv.org/abs/2410.12402}, 
+}
+```
 
 ## Credits
 
