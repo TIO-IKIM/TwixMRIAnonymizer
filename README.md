@@ -11,6 +11,15 @@
 
 </div>
 
+---
+
+> **Update 17.10.2024**:
+>
+> :bangbang: The TwixMRIAnonymizer tool is now integrated in our new holistic de-identification tool. Check out the corresponding repository: https://github.com/code-lukas/medical_image_deidentification :bangbang:
+>
+
+---
+
 **Twix MRI Anonymizer** is a lightweight Python anonymization-tool for Siemens MRI raw data format twix. 
 
 Twix data contains multiple headers. while the dicom header, often saved as ['hdr'] is easily anonymizable, the much larger header ['hdr_string'] is often overlooked, but contains all the same information as the general header, as well as a detailed overview of the scan settings.
