@@ -100,31 +100,34 @@ class TwixAnonymizer:
         Returns:
             None
         """
-        with open(self.filename, "rb") as fin:
-            # we can tell the type of file from the first two uints in the header
-            first_uint, second_uint = struct.unpack("II", fin.read(8))
+        try: 
+            with open(self.filename, "rb") as fin:
+                # we can tell the type of file from the first two uints in the header
+                first_uint, second_uint = struct.unpack("II", fin.read(8))
 
-            # reset the file pointer before giving to specific function
-            fin.seek(0)
+                # reset the file pointer before giving to specific function
+                fin.seek(0)
 
-            with open(
-                Path(self.save_path, f"{str(random.randint(0, 10000))}.dat"), "wb"
-            ) as fout:
-                if first_uint == 0 and second_uint <= 64:
-                    self.filename, self.matches = self.anonymize_twix_vd(
-                        fin, fout, meta_only=self.meta_only
-                    )
-                else:
-                    self.filename, self.matches = self.anonymize_twix_vb(
-                        fin, fout, meta_only=self.meta_only
-                    )
+                with open(
+                    Path(self.save_path, f"{str(random.randint(0, 10000))}.dat"), "wb"
+                ) as fout:
+                    if first_uint == 0 and second_uint <= 64:
+                        self.filename, self.matches = self.anonymize_twix_vd(
+                            fin, fout, meta_only=self.meta_only
+                        )
+                    else:
+                        self.filename, self.matches = self.anonymize_twix_vb(
+                            fin, fout, meta_only=self.meta_only
+                        )
 
-                self.write_csv()
+                    self.write_csv()
 
-            fout.close()
+                fout.close()
 
-            if self.meta_only:
-                os.remove(fout.name)
+                if self.meta_only:
+                    os.remove(fout.name)
+        except Exception as e:
+            logging.warning(f"An error occurred while anonymizing {self.filename}:\n{e}.\n Continue with the next file.")
 
     def write_csv(self) -> None:
         """
