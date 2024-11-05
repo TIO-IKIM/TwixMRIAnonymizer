@@ -15,7 +15,7 @@
 
 > **Update 17.10.2024**:
 >
-> :bangbang: The TwixMRIAnonymizer tool is now integrated in our new holistic de-identification tool. Check out the corresponding repository: https://github.com/code-lukas/medical_image_deidentification :bangbang:
+> :bangbang: The TwixMRIAnonymizer tool is now integrated in our new holistic de-identification tool. Check out the corresponding repository: https://github.com/TIO-IKIM/medical_image_deidentification :bangbang:
 >
 
 ---
