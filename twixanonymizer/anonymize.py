@@ -49,6 +49,14 @@ parser.add_argument(
     action="store_true",
     help="If set, only save the metadata, but do not write anonymized file. Defaults to False",
 )
+parser.add_argument(
+    "-a",
+    "--anatomy",
+    type=str,
+    nargs='+',
+    default=None,
+    help="Anatomies to be saved. Defaults to all. Example: brain knee",
+)
 
 
 class TwixAnonymizer:
@@ -58,6 +66,7 @@ class TwixAnonymizer:
         save_path: str,
         csv_path: str = None,
         meta_only: bool = False,
+        body_parts: list = None,
     ) -> None:
         """
         Anonymizes TWIX files by replacing sensitive information with placeholders.
@@ -67,6 +76,7 @@ class TwixAnonymizer:
             save_path (str): The directory where the anonymized TWIX file will be saved.
             csv_path (str, optional): The path to the CSV file where the matches will be written. Defaults to None.
             meta_only (bool, optional): If True, only save the metadata, but do not write anonymized file. Defaults to False.
+            body_parts (list, optional): A list of body parts to be anonymized. Defaults to None.
 
         Attributes:
             filename (str): The path to the TWIX file to be anonymized.
@@ -87,6 +97,7 @@ class TwixAnonymizer:
         self.save_path = save_path
         self.csv_path = csv_path
         self.meta_only = meta_only
+        self.body_parts = body_parts
 
     def read_and_anonymize(self) -> None:
         """
@@ -113,18 +124,19 @@ class TwixAnonymizer:
                 ) as fout:
                     if first_uint == 0 and second_uint <= 64:
                         self.filename, self.matches = self.anonymize_twix_vd(
-                            fin, fout, meta_only=self.meta_only
+                            fin, fout
                         )
                     else:
                         self.filename, self.matches = self.anonymize_twix_vb(
-                            fin, fout, meta_only=self.meta_only
+                            fin, fout
                         )
 
-                    self.write_csv()
+                    if self.matches:
+                        self.write_csv()
 
                 fout.close()
 
-                if self.meta_only:
+                if self.meta_only or not self.matches:
                     os.remove(fout.name)
         except Exception as e:
             logging.warning(f"An error occurred while anonymizing {self.filename}:\n{e}.\n Continue with the next file.")
@@ -180,8 +192,7 @@ class TwixAnonymizer:
 
         return formatted_date
 
-    @staticmethod
-    def anonymize_twix_header(header_string: str) -> str | dict:
+    def anonymize_twix_header(self, header_string: str) -> str | dict:
         """
         Anonymizes the header string of a TWIX file by replacing sensitive information with placeholders.
 
@@ -236,13 +247,25 @@ class TwixAnonymizer:
         }
 
         matches = {}
-
+                    
         frame_of_reference = re.search(
             r"(<ParamString.\"FrameOfReference\">  { )(\".+\")(  }\n)", header_string
         ).group(2)
         exam_date_time = frame_of_reference.split(".")[10]
         exam_date = exam_date_time[2:8]
         matches["Exam_date"] = TwixAnonymizer._get_date(exam_date)
+        
+        # Do not anonymize these buffers, but save them
+        for key, buffer in meta_buffer.items():
+            match = re.search(buffer, header_string)
+            if match:
+                matches[key] = match.group(2)
+
+        # Return None if the body part is not in the list of wanted anatomies
+        if self.body_parts:
+            body_parts_lower = [part.lower() for part in self.body_parts]
+            if matches.get("tBodyPartExamined").lower() not in body_parts_lower:
+                return None, None
 
         for key, buffer in number_buffer.items():
             match = re.search(buffer, header_string)
@@ -287,12 +310,6 @@ class TwixAnonymizer:
                 header_string,
             )
 
-        # Do not anonymize these buffers, but save them
-        for key, buffer in meta_buffer.items():
-            match = re.search(buffer, header_string)
-            if match:
-                matches[key] = match.group(2)
-
         header_string = re.sub(
             r"\"[\d\.]*{0}[\d\.]*\"".format(exam_date),
             lambda match: re.sub(r"\w", "x", match.group()),
@@ -301,8 +318,7 @@ class TwixAnonymizer:
 
         return header_string, matches
 
-    @staticmethod
-    def anonymize_twix_vd(fin: IO, fout: IO, meta_only: bool = False) -> str | dict:
+    def anonymize_twix_vd(self, fin: IO, fout: IO) -> str | dict:
         """
         Anonymizes a TWIX VD file.
 
@@ -319,7 +335,7 @@ class TwixAnonymizer:
         """
         twix_id, num_measurements = struct.unpack("II", fin.read(8))
 
-        if not meta_only:
+        if not self.meta_only:
             fout.write(struct.pack("II", twix_id, num_measurements))
 
         for i in range(num_measurements):
@@ -335,11 +351,13 @@ class TwixAnonymizer:
             header = fin.read(header_size - 4)
             header_string = header[:-24].decode("latin-1")
 
-            anonymized_header, matches = TwixAnonymizer.anonymize_twix_header(
+            anonymized_header, matches = self.anonymize_twix_header(
                 header_string=header_string
             )
+            if anonymized_header is None:
+                break
 
-            if not meta_only:
+            if not self.meta_only:
                 fout.seek(8 + 152 * i)
                 fout.write(
                     struct.pack(
@@ -361,15 +379,13 @@ class TwixAnonymizer:
 
         return fout.name, matches
 
-    @staticmethod
-    def anonymize_twix_vb(fin: IO, fout: IO, meta_only: bool = False) -> str | dict:
+    def anonymize_twix_vb(self, fin: IO, fout: IO) -> str | dict:
         """
         Anonymizes a TWIX VB file.
 
         Args:
             fin (file): The input file object.
             fout (file): The output file object.
-            meta_only (bool, optional): If True, only save the metadata, but do not write anonymized file. Defaults to False.
 
         Returns:
             Union[str, dict]: The name of the output file and a dictionary of matches found during anonymization.
@@ -386,11 +402,11 @@ class TwixAnonymizer:
         # last 24 bytes of the header contain non-strings
         header_string = header[:-24].decode("latin-1")
 
-        anonymized_header, matches = TwixAnonymizer.anonymize_twix_header(
+        anonymized_header, matches = self.anonymize_twix_header(
             header_string=header_string
         )
 
-        if not meta_only:
+        if not self.meta_only:
             fout.write(struct.pack("I", header_size))
             fout.write(anonymized_header.encode("latin-1"))
             fout.write(header[-24:])
@@ -399,7 +415,7 @@ class TwixAnonymizer:
         return fout.name, matches
 
 
-def anonymize_twix(input_path: str, save_path: str, meta_only: bool = False):
+def anonymize_twix(input_path: str, save_path: str, meta_only: bool = False, body_parts: list = None) -> None:
     """
     Anonymizes TWIX files located at the given input path and saves the anonymized files at the specified save path.
 
@@ -420,7 +436,10 @@ def anonymize_twix(input_path: str, save_path: str, meta_only: bool = False):
             logging.info(f"Only saving metadata! Not writing anonymized files.")
         else:
             logging.info(f"Will save anonymized files in {save_path}.")
-        logging.info(f"Anonymizing all files in {input_path}.")
+        if body_parts:
+            logging.info(f"Anonymizing all files in {input_path} containing the following body parts: {body_parts}.")
+        else:
+            logging.info(f"Anonymizing all files in {input_path}.")
         logging.info(f"Total of {folder_len} files.")
 
         csv_path = Path(save_path, f"{Path(input_path).name}.csv")
@@ -428,7 +447,7 @@ def anonymize_twix(input_path: str, save_path: str, meta_only: bool = False):
         for filename in tqdm(
             files, desc="Anonymizing files", total=folder_len, unit="files"
         ):
-            anonymizer = TwixAnonymizer(filename, save_path, csv_path, meta_only)
+            anonymizer = TwixAnonymizer(filename, save_path, csv_path, meta_only, body_parts)
             anonymizer.read_and_anonymize()
 
     else:
@@ -445,6 +464,7 @@ def main(args):
     input_path = args.input
     save_path = args.output
     meta_only = args.meta_only
+    body_parts = args.anatomy
 
     assert Path(input_path).exists(), f"{input_path} does not exist."
 
@@ -454,7 +474,7 @@ def main(args):
             shutil.rmtree(save_path)
     os.makedirs(save_path, exist_ok=True)
 
-    anonymize_twix(input_path, save_path, meta_only)
+    anonymize_twix(input_path, save_path, meta_only, body_parts)
 
 
 if __name__ == "__main__":

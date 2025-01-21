@@ -15,8 +15,9 @@
 
 > **Update 17.10.2024**:
 >
-> :bangbang: The TwixMRIAnonymizer tool is now integrated in our new holistic de-identification tool. Check out the corresponding repository: https://github.com/code-lukas/medical_image_deidentification :bangbang:
+> :bangbang: The TwixMRIAnonymizer tool is now integrated in our new holistic de-identification tool. Check out the corresponding repository: https://github.com/TIO-IKIM/medical_image_deidentification :bangbang:
 >
+> Note: The TwixMRIAnonymizer includes some functionality not yet available in the de-identification tool mentioned above.
 
 ---
 
@@ -60,8 +61,9 @@ options:
   -h, --help   show this help message and exit
   --i I        The path to the TWIX file or directory containing TWIX files to be anonymized.
   --o O        The path to save the anonymized files.
-  --f          If set, force overwrite existing files. Defaults to False
-  --meta_only  If set, only save the metadata, but do not write anonymized file. Defaults to False
+  --f          If set, force overwrite existing files. Defaults to False.
+  --a          Anatomies to be anonymized. If chosen, all other anatomies will be ignored. Defaults to all. Example: Brain Knee
+  --meta_only  If set, only save the metadata, but do not write anonymized file. Defaults to False.
 ```
 
 ## Roadmap
